@@ -125,7 +125,8 @@ public class TenantConfiguration {
 
                     String accessUrl = result.getString("ACCESS_URL");
                     tenantInfo.setAccessUrl(accessUrl);
-                    //System.out.println(accessUrl);
+
+                    System.out.println(accessUrl);
 
                     tenantInfo.setCreatedDateTime(new Date());
                     tenantInfo.setLastUpdatedDateTime(new Date());
