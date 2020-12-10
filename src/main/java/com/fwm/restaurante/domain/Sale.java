@@ -12,7 +12,7 @@ import java.util.Date;
 @Data
 public class Sale {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
     private Integer company;
     private Integer employee;
