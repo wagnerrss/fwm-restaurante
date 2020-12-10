@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Data
 public class Category {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
     private String title;
 }
