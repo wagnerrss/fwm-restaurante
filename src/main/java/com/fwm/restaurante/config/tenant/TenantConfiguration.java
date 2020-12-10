@@ -97,6 +97,8 @@ public class TenantConfiguration {
             hikariConfig.setDriverClassName(properties.getDriverClassName());
             hikariConfig.setJdbcUrl(properties.getUrl());
 
+            System.out.println("hikari " + properties.getUrl());
+
             return new HikariDataSource(hikariConfig);
         }
 
