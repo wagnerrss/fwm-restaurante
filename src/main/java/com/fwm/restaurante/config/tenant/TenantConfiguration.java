@@ -112,7 +112,7 @@ public class TenantConfiguration {
      */
     private Map<TenantInfo, List<TenantProperty>> getTenantInfo(DataSource dataSource) throws Exception {
         //final String TENANT_INFO = "SELECT TENANT_ID, NAME, 'jdbc:postgresql://'|| IP_ADDRESS || ':5432/'|| DATABASE ACCESS_URL FROM CLIENT";
-        final String TENANT_INFO = "SELECT TENANT_ID, NAME, 'postgres://'|| IP_ADDRESS || ':5432/'|| DATABASE ACCESS_URL FROM CLIENT";
+        final String TENANT_INFO = "SELECT TENANT_ID, NAME, 'jdbc:postgres://'|| IP_ADDRESS || ':5432/'|| DATABASE ACCESS_URL FROM CLIENT";
         Map<TenantInfo, List<TenantProperty>> tenantInfos = new HashMap<>();
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
