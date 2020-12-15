@@ -33,28 +33,31 @@ public class RestauranteController {
     private EmployeeService employeeService;
 
     @Autowired
+    private SystemUserService systemUserService;
+
+    @Autowired
     private PaymentService paymentService;
 
     @Autowired
     private LoginService loginService;
 
     @GetMapping
-    public String get(){
+    public String get() {
         return "Get API FWM para restaurante";
     }
 
     @PostMapping
-    public String post(){
+    public String post() {
         return "Post API FWM para restaurante";
     }
 
     @PutMapping
-    public String put(){
+    public String put() {
         return "Put API FWM para restaurante";
     }
 
     @DeleteMapping
-    public String delete(){
+    public String delete() {
         return "Delete API FWM para restaurante";
     }
 
@@ -358,23 +361,72 @@ public class RestauranteController {
                 ResponseEntity.notFound().build();
     }
 
-//*****************************************
+    //*****************************************
 //Login
 //*****************************************
-@GetMapping("/login")
-public ResponseEntity getLogin(@RequestBody Map login) {
-    try {
-        Login l = loginService.findUser(login);
+    @GetMapping("/login")
+    public ResponseEntity getLogin(@RequestBody Map login) {
+        try {
+            Login l = loginService.findUser(login);
 
-        if ((l == null) || (l.getId() <= 0)){
+            if ((l == null) || (l.getId() <= 0)) {
+                return ResponseEntity.badRequest().body("Usuário ou Grupo não encontrado!");
+            }
+
+            return ResponseEntity.ok(l);
+        } catch (Exception ex) {
             return ResponseEntity.badRequest().body("Usuário ou Grupo não encontrado!");
         }
-
-        return ResponseEntity.ok(l);
-    } catch (Exception ex) {
-        return ResponseEntity.badRequest().body("Usuário ou Grupo não encontrado!");
     }
-}
 
+//*****************************************
+//SystemUser (Usuário do sistema)
+//*****************************************
+
+    @GetMapping("/systemUser")
+    public ResponseEntity<Iterable<SystemUser>> getSystemUser() {
+
+        return ResponseEntity.ok(systemUserService.getSystemUsers());
+    }
+
+    @GetMapping("/systemUser/{id}")
+    public ResponseEntity getSystemUserById(@PathVariable("id") Integer id) {
+        Optional<SystemUser> systemUser = systemUserService.getById(id);
+
+        return systemUser.isPresent() ?
+                ResponseEntity.ok(systemUser.get()) :
+                ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/systemUser")
+    public ResponseEntity postSystemUser(@RequestBody SystemUser systemUser) {
+        try {
+            SystemUser s = systemUserService.insert(systemUser);
+
+            URI location = getUri(s.getId());
+            return ResponseEntity.created(location).build();
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
+    @PutMapping("/systemUser/{id}")
+    public ResponseEntity putSystemUser(@PathVariable("id") Integer id, @RequestBody SystemUser systemUser) {
+        systemUser.setId(id);
+        SystemUser s = systemUserService.update(id, systemUser);
+
+        return s != null ?
+                ResponseEntity.ok(s) :
+                ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/systemUser/{id}")
+    public ResponseEntity deleteSystemUser(@PathVariable("id") Integer id) {
+        boolean ok = systemUserService.delete(id);
+
+        return ok ?
+                ResponseEntity.ok().build() :
+                ResponseEntity.notFound().build();
+    }
 
 }
