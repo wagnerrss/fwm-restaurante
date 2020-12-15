@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface SystemUserRepository extends CrudRepository<SystemUser, Integer> {
-    Optional<SystemUser> findByUserName(String userName);
+    Optional<SystemUser> findByUsername(String username);
 }

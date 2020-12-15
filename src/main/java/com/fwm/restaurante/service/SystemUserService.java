@@ -24,7 +24,7 @@ public class SystemUserService {
     }
 
     public Optional<SystemUser> getByUserName(String username) {
-        return systemUserRepository.findByUserName(username);
+        return systemUserRepository.findByUsername(username);
     }
 
     public SystemUser insert(SystemUser systemUser) {
