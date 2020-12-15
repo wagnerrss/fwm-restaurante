@@ -46,7 +46,9 @@ public class SystemUserService {
         Optional<SystemUser> optional = getById(id);
         if (optional.isPresent()) {
             SystemUser s = optional.get();
-            s.setUsername(systemUser.getUsername());
+            s.setPassword(systemUser.getPassword());
+            s.setEmail(systemUser.getEmail());
+            s.setType(systemUser.getType());
 
             systemUserRepository.save(s);
 
