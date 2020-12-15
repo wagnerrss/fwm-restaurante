@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                .antMatchers(HttpMethod.GET, "/api/v1/geraToken").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/geraToken", "/api/v1/restaurante/login").permitAll()
                 .antMatchers(HttpMethod.POST,   "/api/v1/geraToken" ).permitAll()
                 .antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**")
                 .permitAll()

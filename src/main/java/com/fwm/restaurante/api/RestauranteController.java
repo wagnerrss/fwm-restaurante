@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
 
 //eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJSRVNULTAwMDAxIiwiZXhwIjoxOTIyNDA4ODUwLCJyb2wiOlsiUk9MRV9VU0VSIl19.Gaj7j3U_5s3Ygpdf0Rn2uX6ENK5fqz8MXsW7Edev5mGbjIVv53Yf_qieg4AAMMtDJ42WZLhDGpQKZBy7FyT1eg
@@ -33,6 +34,9 @@ public class RestauranteController {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private LoginService loginService;
 
     @GetMapping
     public String get(){
@@ -353,5 +357,24 @@ public class RestauranteController {
                 ResponseEntity.ok().build() :
                 ResponseEntity.notFound().build();
     }
+
+//*****************************************
+//Login
+//*****************************************
+@GetMapping("/login")
+public ResponseEntity getLogin(@RequestBody Map login) {
+    try {
+        Login l = loginService.findUser(login);
+
+        if ((l == null) || (l.getId() <= 0)){
+            return ResponseEntity.badRequest().body("Usuário ou Grupo não encontrado!");
+        }
+
+        return ResponseEntity.ok(l);
+    } catch (Exception ex) {
+        return ResponseEntity.badRequest().body("Usuário ou Grupo não encontrado!");
+    }
+}
+
 
 }
