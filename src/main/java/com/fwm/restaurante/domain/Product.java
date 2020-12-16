@@ -19,4 +19,5 @@ public class Product {
     private Integer type;
     private Integer category;
     private Integer destination;
+    private String barCode;
 }

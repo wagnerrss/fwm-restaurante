@@ -62,6 +62,7 @@ public class ProductService {
             p.setCategory(product.getCategory());
             p.setDestination(product.getDestination());
             p.setType(product.getType());
+            p.setBarCode(product.getBarCode());
 
             productRepository.save(p);
 
