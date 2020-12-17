@@ -3,11 +3,13 @@ package com.fwm.restaurante.api;
 import com.fwm.restaurante.domain.*;
 import com.fwm.restaurante.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -64,6 +66,43 @@ public class RestauranteController {
     private URI getUri(Integer id) {
         return ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
     }
+
+    private Map mapErro(String tipo, String mensagem) {
+        switch (tipo) {
+            case "GET":
+                return new LinkedHashMap<String, Object>() {
+                    {
+                        put("status", 404);
+                        put("mensagem", mensagem.trim().equals("") ? "Registro não encontrado!" : mensagem);
+                    }
+                };
+            case "POST":
+                return new LinkedHashMap<String, Object>() {
+                    {
+                        put("status", 400);
+                        put("mensagem", mensagem.trim().equals("") ? "Não foi possível inserir o registro!" : mensagem);
+                    }
+                };
+            case "PUT":
+                return new LinkedHashMap<String, Object>() {
+                    {
+                        put("status", 400);
+                        put("mensagem", mensagem.trim().equals("") ? "Não foi possível atualizar o registro!" : mensagem);
+                    }
+                };
+            case "DELETE":
+                return new LinkedHashMap<String, Object>() {
+                    {
+                        put("status", 400);
+                        put("mensagem", mensagem.trim().equals("") ? "Não foi possível excluir o registro!" : mensagem);
+                    }
+                };
+        }
+
+        return new LinkedHashMap();
+    }
+
+
 //*****************************************
 //    Product (Produtos
 //*****************************************
@@ -79,7 +118,7 @@ public class RestauranteController {
 
         return product.isPresent() ?
                 ResponseEntity.ok(product.get()) :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("GET", ""), HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/product")
@@ -90,18 +129,23 @@ public class RestauranteController {
             URI location = getUri(p.getId());
             return ResponseEntity.created(location).build();
         } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
+            return new ResponseEntity<>(mapErro("POST", ex.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/product/{id}")
     public ResponseEntity putProduct(@PathVariable("id") Integer id, @RequestBody Product product) {
-        product.setId(id);
-        Product p = productService.update(id, product);
+        try {
+            product.setId(id);
+            Product p = productService.update(id, product);
 
-        return p != null ?
-                ResponseEntity.ok(p) :
-                ResponseEntity.notFound().build();
+            return p != null ?
+                    ResponseEntity.ok(p) :
+                    new ResponseEntity<>(mapErro("PUT", ""), HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(mapErro("PUT", ex.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @DeleteMapping("/product/{id}")
@@ -110,7 +154,7 @@ public class RestauranteController {
 
         return ok ?
                 ResponseEntity.ok().build() :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("DELETE", ""), HttpStatus.BAD_REQUEST);
     }
 
 //*****************************************
@@ -128,7 +172,7 @@ public class RestauranteController {
 
         return category.isPresent() ?
                 ResponseEntity.ok(category.get()) :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("GET", ""), HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/category")
@@ -139,18 +183,23 @@ public class RestauranteController {
             URI location = getUri(c.getId());
             return ResponseEntity.created(location).build();
         } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
+            return new ResponseEntity<>(mapErro("POST", ex.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/category/{id}")
     public ResponseEntity putCategory(@PathVariable("id") Integer id, @RequestBody Category category) {
-        category.setId(id);
-        Category c = categoryService.update(id, category);
+        try {
+            category.setId(id);
+            Category c = categoryService.update(id, category);
 
-        return c != null ?
-                ResponseEntity.ok(c) :
-                ResponseEntity.notFound().build();
+            return c != null ?
+                    ResponseEntity.ok(c) :
+                    new ResponseEntity<>(mapErro("PUT", ""), HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(mapErro("PUT", ex.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @DeleteMapping("/category/{id}")
@@ -159,7 +208,7 @@ public class RestauranteController {
 
         return ok ?
                 ResponseEntity.ok().build() :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("DELETE", ""), HttpStatus.BAD_REQUEST);
     }
 
 //*****************************************
@@ -177,7 +226,7 @@ public class RestauranteController {
 
         return destination.isPresent() ?
                 ResponseEntity.ok(destination.get()) :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("GET", ""), HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/destination")
@@ -188,18 +237,23 @@ public class RestauranteController {
             URI location = getUri(d.getId());
             return ResponseEntity.created(location).build();
         } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
+            return new ResponseEntity<>(mapErro("POST", ex.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/destination/{id}")
     public ResponseEntity putDestination(@PathVariable("id") Integer id, @RequestBody Destination destination) {
-        destination.setId(id);
-        Destination d = destinationService.update(id, destination);
+        try {
+            destination.setId(id);
+            Destination d = destinationService.update(id, destination);
 
-        return d != null ?
-                ResponseEntity.ok(d) :
-                ResponseEntity.notFound().build();
+            return d != null ?
+                    ResponseEntity.ok(d) :
+                    new ResponseEntity<>(mapErro("PUT", ""), HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(mapErro("PUT", ex.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @DeleteMapping("/destination/{id}")
@@ -208,7 +262,7 @@ public class RestauranteController {
 
         return ok ?
                 ResponseEntity.ok().build() :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("DELETE", ""), HttpStatus.BAD_REQUEST);
     }
 
 
@@ -227,7 +281,7 @@ public class RestauranteController {
 
         return type.isPresent() ?
                 ResponseEntity.ok(type.get()) :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("GET", ""), HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/type")
@@ -238,18 +292,23 @@ public class RestauranteController {
             URI location = getUri(t.getId());
             return ResponseEntity.created(location).build();
         } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
+            return new ResponseEntity<>(mapErro("POST", ex.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/type/{id}")
     public ResponseEntity putType(@PathVariable("id") Integer id, @RequestBody Type type) {
-        type.setId(id);
-        Type t = typeService.update(id, type);
+        try {
+            type.setId(id);
+            Type t = typeService.update(id, type);
 
-        return t != null ?
-                ResponseEntity.ok(t) :
-                ResponseEntity.notFound().build();
+            return t != null ?
+                    ResponseEntity.ok(t) :
+                    new ResponseEntity<>(mapErro("PUT", ""), HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(mapErro("PUT", ex.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @DeleteMapping("/type/{id}")
@@ -258,7 +317,7 @@ public class RestauranteController {
 
         return ok ?
                 ResponseEntity.ok().build() :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("DELETE", ""), HttpStatus.BAD_REQUEST);
     }
 
 //*****************************************
@@ -277,7 +336,7 @@ public class RestauranteController {
 
         return employee.isPresent() ?
                 ResponseEntity.ok(employee.get()) :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("GET", ""), HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/employee")
@@ -288,18 +347,23 @@ public class RestauranteController {
             URI location = getUri(e.getId());
             return ResponseEntity.created(location).build();
         } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
+            return new ResponseEntity<>(mapErro("POST", ex.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/employee/{id}")
     public ResponseEntity putEmployee(@PathVariable("id") Integer id, @RequestBody Employee employee) {
-        employee.setId(id);
-        Employee e = employeeService.update(id, employee);
+        try {
+            employee.setId(id);
+            Employee e = employeeService.update(id, employee);
 
-        return e != null ?
-                ResponseEntity.ok(e) :
-                ResponseEntity.notFound().build();
+            return e != null ?
+                    ResponseEntity.ok(e) :
+                    new ResponseEntity<>(mapErro("PUT", ""), HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(mapErro("PUT", ex.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @DeleteMapping("/employee/{id}")
@@ -308,7 +372,7 @@ public class RestauranteController {
 
         return ok ?
                 ResponseEntity.ok().build() :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("DELETE", ""), HttpStatus.BAD_REQUEST);
     }
 
 //*****************************************
@@ -327,7 +391,7 @@ public class RestauranteController {
 
         return payment.isPresent() ?
                 ResponseEntity.ok(payment.get()) :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("GET", ""), HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/payment")
@@ -338,18 +402,23 @@ public class RestauranteController {
             URI location = getUri(p.getId());
             return ResponseEntity.created(location).build();
         } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
+            return new ResponseEntity<>(mapErro("POST", ex.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/payment/{id}")
     public ResponseEntity putPayment(@PathVariable("id") Integer id, @RequestBody Payment payment) {
-        payment.setId(id);
-        Payment p = paymentService.update(id, payment);
+        try {
+            payment.setId(id);
+            Payment p = paymentService.update(id, payment);
 
-        return p != null ?
-                ResponseEntity.ok(p) :
-                ResponseEntity.notFound().build();
+            return p != null ?
+                    ResponseEntity.ok(p) :
+                    new ResponseEntity<>(mapErro("PUT", ""), HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(mapErro("PUT", ex.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @DeleteMapping("/payment/{id}")
@@ -358,7 +427,7 @@ public class RestauranteController {
 
         return ok ?
                 ResponseEntity.ok().build() :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("DELETE", ""), HttpStatus.BAD_REQUEST);
     }
 
     //*****************************************
@@ -395,7 +464,7 @@ public class RestauranteController {
 
         return systemUser.isPresent() ?
                 ResponseEntity.ok(systemUser.get()) :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("GET", ""), HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/systemUser")
@@ -406,18 +475,24 @@ public class RestauranteController {
             URI location = getUri(s.getId());
             return ResponseEntity.created(location).build();
         } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
+            return new ResponseEntity<>(mapErro("POST", ex.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/systemUser/{id}")
     public ResponseEntity putSystemUser(@PathVariable("id") Integer id, @RequestBody SystemUser systemUser) {
-        systemUser.setId(id);
-        SystemUser s = systemUserService.update(id, systemUser);
 
-        return s != null ?
-                ResponseEntity.ok(s) :
-                ResponseEntity.notFound().build();
+        try {
+            systemUser.setId(id);
+            SystemUser s = systemUserService.update(id, systemUser);
+
+            return s != null ?
+                    ResponseEntity.ok(s) :
+                    new ResponseEntity<>(mapErro("PUT", ""), HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(mapErro("PUT", ex.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @DeleteMapping("/systemUser/{id}")
@@ -426,7 +501,7 @@ public class RestauranteController {
 
         return ok ?
                 ResponseEntity.ok().build() :
-                ResponseEntity.notFound().build();
+                new ResponseEntity<>(mapErro("DELETE", ""), HttpStatus.BAD_REQUEST);
     }
 
 }
