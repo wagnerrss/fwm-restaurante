@@ -433,8 +433,8 @@ public class RestauranteController {
     //*****************************************
 //Login
 //*****************************************
-    @GetMapping("/login")
-    public ResponseEntity getLogin(@RequestBody Map login) {
+    @PostMapping("/login")
+    public ResponseEntity postLogin(@RequestBody Map login) {
         try {
             Login l = loginService.findUser(login);
 
