@@ -47,6 +47,7 @@ public class CategoryService {
         if (optional.isPresent()) {
             Category c = optional.get();
             c.setTitle(category.getTitle());
+            c.setColor(category.getColor());
 
             categoryRepository.save(c);
 
